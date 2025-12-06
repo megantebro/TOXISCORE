@@ -1,5 +1,7 @@
 import sqlite3
 
+from MessageData import MessageData
+
 conn = sqlite3.connect("message.db")
 cursor = conn.cursor()
 
@@ -15,20 +17,59 @@ CREATE TABLE IF NOT EXISTS logs (
 """)
 
 conn.commit()
+conn.close()
 
-def save_message(user_id:str,username:str,content:str,score:int):
-    cursor.execute("""
-    INSERT INTO logs (user_id,username,content,score)
-    VALUES(?,?,?,?)
-    """,(user_id,username,content,score))
-    
+def save_messages(msgDatas:list[MessageData], scores: list):
+    """
+    messages: List[MessageData]
+    scores: List[int]
+    """
+
+    conn = sqlite3.connect("message.db")
+    cursor = conn.cursor()
+
+    for i in range(len(scores)):
+        cursor.execute("""
+            INSERT INTO logs (user_id, username, content, score)
+            VALUES (?, ?, ?, ?)
+        """, (msgDatas[i].user.id, msgDatas[i].user.display_name, msgDatas[i].content, scores[i]))
+
     conn.commit()
+    conn.close()
 
 
 def get_avg_userscore(user_id:str):
+    conn = sqlite3.connect("message.db")
+    cursor = conn.cursor()
     cursor.execute("""
     SELECT AVG(score) FROM logs WHERE user_id = ?
     """, (user_id,))
-    return cursor.fetchone()[0]
 
-    
+    score = cursor.fetchone()[0]
+    conn.close()
+    return score
+
+def get_server_avg():
+    conn = sqlite3.connect("message.db")
+    cursor = conn.cursor()
+
+    cursor.execute("SELECT AVG(score) FROM logs")
+    avg = cursor.fetchone()[0] or 0
+
+    conn.close()
+    return avg
+
+def get_server_stddev():
+    conn = sqlite3.connect("message.db")
+    cursor = conn.cursor()
+
+    cursor.execute("SELECT score FROM logs")
+    scores = [row[0] for row in cursor.fetchall()]
+
+    if len(scores) <= 1:
+        return 0
+
+    conn.close()
+    import statistics
+    return statistics.pstdev(scores)
+
