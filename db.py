@@ -16,10 +16,8 @@ CREATE TABLE IF NOT EXISTS logs (
 )
 """)
 
-cursor.execute("""
-CREATE TABLE IF NOT EXISTS user_stats (
-    id_
-)""")
+
+
 
 
 conn.commit()
@@ -75,8 +73,48 @@ def get_server_stddev():
 
     if len(scores) <= 1:
         return 0
-
     conn.close()
     import statistics
     return statistics.pstdev(scores)
+    
+def get_avg_rank(limit,worst):
+    conn = sqlite3.connect("message.db")
+    cursor = conn.cursor()
+
+    if worst: worst = "DESC"
+    else:
+        worst = "ASC"
+
+    cursor.execute(f"""
+        SELECT user_id, AVG(score) AS avg_score
+        FROM logs
+        GROUP BY user_id
+        ORDER BY avg_score {worst}
+        LIMIT ?
+    """, (limit,))
+
+    rows = cursor.fetchall()
+    conn.close()
+    return rows
+
+def get_total_rank(limit,worst):
+    conn = sqlite3.connect("message.db")
+    cursor = conn.cursor()
+
+    if worst: worst = "DESC"
+    else: worst = "ASC"
+
+    cursor.execute(f"""
+        SELECT user_id SUM(score) as sum_score
+        FROM logs
+        GROUP BY user_id
+        ORDER BY sum_score {worst}
+        LIMIT ?
+    """,(limit))
+    rows = cursor.fetchall()
+    conn.close()
+    return rows
+
+
+    
 

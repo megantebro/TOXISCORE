@@ -1,8 +1,9 @@
+from enum import Enum
 import json
 from discord import app_commands
 import discord
 
-from db import get_avg_userscore, get_server_avg, get_server_stddev
+from db import get_avg_rank, get_avg_userscore, get_server_avg, get_server_stddev
 
 @app_commands.command(name="avg_toxiscore",description="ユーザーの平均暴言スコアを取得します")
 async def avg_toxiscore(interaction:discord.Interaction,user:discord.Member = None):
@@ -81,8 +82,34 @@ async def remove_exclude_channel(interaction:discord.Interaction,channel:discord
 
     await interaction.response.send_message(channel.jump_url + "を除外リストから削除しました")
 
+
+class rankType(Enum):
+    avg = "avg"
+    total = "total"
+
+@app_commands.command(
+        name="ranking",
+        description="サーバーの治安にどのくらい影響を与えているかのランキングを表示します"
+)
+async def ranking(interaction:discord.Interaction,worst:bool = False,min_post:int = 10,type:rankType = rankType.avg):
+    if type == rankType.avg:
+        rows = get_avg_rank(worst=worst,limit=min_post)
+    elif type == rankType.total            :
+        rows = ()
+    res = ""
+    if worst: 
+        res = "サーバーの優良ユーザーランキング"
+    else:
+        res = "サーバー平均暴言度ランキング"
+    count = 1
+    for row in rows:
+        res += f"\n #{count}  <@{row[0]}>:平均暴言指数{row[1]}"
+        count +=1
+    await interaction.response.send_message(res)
+
 def setup(tree: app_commands.CommandTree) -> None:
     tree.add_command(avg_toxiscore)
     tree.add_command(toxicity_rank)
     tree.add_command(add_exclude_channel)
     tree.add_command(remove_exclude_channel)
+    tree.add_command(ranking)
