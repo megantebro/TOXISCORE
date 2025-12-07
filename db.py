@@ -16,6 +16,12 @@ CREATE TABLE IF NOT EXISTS logs (
 )
 """)
 
+cursor.execute("""
+CREATE TABLE IF NOT EXISTS user_stats (
+    id_
+)""")
+
+
 conn.commit()
 conn.close()
 
@@ -36,6 +42,7 @@ def save_messages(msgDatas:list[MessageData], scores: list):
 
     conn.commit()
     conn.close()
+
 
 
 def get_avg_userscore(user_id:str):

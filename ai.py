@@ -1,4 +1,4 @@
-from openai import OpenAI
+from openai import AsyncOpenAI
 import os
 from dotenv import load_dotenv
 import json
@@ -6,7 +6,7 @@ from MessageData import MessageData
 
 load_dotenv()
 
-client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
+client = AsyncOpenAI(api_key=os.getenv("OPENAI_API_KEY"))
 
 async def judge_message(messages: list):
     """
@@ -30,13 +30,14 @@ async def judge_message(messages: list):
     """
 
     # 新 API（v1.x）形式
-    response = client.chat.completions.create(
+    response = await client.chat.completions.create(
         model="gpt-4o-mini",
         messages=[
             {"role": "user", "content": prompt}
         ]
     )
 
+     
     raw = response.choices[0].message.content.strip()
 
     try:
