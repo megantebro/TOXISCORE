@@ -9,7 +9,7 @@ from db import get_avg_rank, get_avg_userscore, get_server_avg, get_server_stdde
 async def avg_toxiscore(interaction:discord.Interaction,user:discord.Member = None):
     if(user == None):
         user = interaction.user
-    avg_score = get_avg_userscore(user.id)
+    avg_score = get_avg_userscore(user.id,interaction.guild.id)
     await interaction.response.send_message(avg_score)
 
 @app_commands.command(
@@ -20,9 +20,10 @@ async def toxicity_rank(interaction: discord.Interaction, user: discord.Member =
     if user is None:
         user = interaction.user
 
-    user_avg = get_avg_userscore(str(user.id))
-    server_avg = get_server_avg()
-    server_std = get_server_stddev()
+    guild = interaction.guild
+    user_avg = get_avg_userscore(user.id,guild.id)
+    server_avg = get_server_avg(guild.id)
+    server_std = get_server_stddev(guild.id)
 
     impact = user_avg - server_avg
 
@@ -93,11 +94,11 @@ class rankType(Enum):
 )
 async def ranking(interaction:discord.Interaction,worst:bool = False,min_post:int = 10,type:rankType = rankType.avg):
     if type == rankType.avg:
-        rows = get_avg_rank(worst=worst,limit=min_post)
+        rows = get_avg_rank(worst=worst,limit=min_post,guild_id=interaction.guild.id)
     elif type == rankType.total            :
         rows = ()
     res = ""
-    if worst: 
+    if not worst: 
         res = "サーバーの優良ユーザーランキング"
     else:
         res = "サーバー平均暴言度ランキング"

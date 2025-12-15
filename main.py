@@ -26,6 +26,8 @@ user_last_messagetime:dict[User,float] = {}
 load_dotenv()
 TOKEN = os.getenv("TOKEN")
 
+
+
 @client.event
 async def on_ready():
     await tree.sync()
@@ -43,8 +45,9 @@ async def on_message(message:discord.Message):
 
     user = message.author
     content = message.content
-    msg_data = MessageData(user,content)
+    msg_data = MessageData(user,message.guild.id,content)
     queue.append(msg_data)
+
 
     user_last_messagetime[user] = time.time()
     print(f"{message.author.display_name}:{message.content}")

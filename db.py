@@ -9,6 +9,7 @@ cursor.execute("""
 CREATE TABLE IF NOT EXISTS logs (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     user_id TEXT,
+    guild_id TEXT,
     username TEXT,
     content TEXT,
     score INTEGER,
@@ -34,41 +35,41 @@ def save_messages(msgDatas:list[MessageData], scores: list):
 
     for i in range(len(scores)):
         cursor.execute("""
-            INSERT INTO logs (user_id, username, content, score)
-            VALUES (?, ?, ?, ?)
-        """, (msgDatas[i].user.id, msgDatas[i].user.display_name, msgDatas[i].content, scores[i]))
+            INSERT INTO logs (user_id,guild_id, username, content, score)
+            VALUES (?, ?, ?, ?, ?)
+        """, (msgDatas[i].user.id,msgDatas[i].guild_id, msgDatas[i].user.display_name, msgDatas[i].content, scores[i]))
 
     conn.commit()
     conn.close()
 
 
 
-def get_avg_userscore(user_id:str):
+def get_avg_userscore(user_id:int,guild_id:int):
     conn = sqlite3.connect("message.db")
     cursor = conn.cursor()
     cursor.execute("""
-    SELECT AVG(score) FROM logs WHERE user_id = ?
-    """, (user_id,))
+    SELECT AVG(score) FROM logs WHERE user_id = ? AND guild_id = ?
+    """, (user_id,guild_id))
 
     score = cursor.fetchone()[0]
     conn.close()
     return score
 
-def get_server_avg():
+def get_server_avg(guild_id):
     conn = sqlite3.connect("message.db")
     cursor = conn.cursor()
 
-    cursor.execute("SELECT AVG(score) FROM logs")
+    cursor.execute("SELECT AVG(score) FROM logs WHERE guild_id = ?",(guild_id,))
     avg = cursor.fetchone()[0] or 0
 
     conn.close()
     return avg
 
-def get_server_stddev():
+def get_server_stddev(guild_id):
     conn = sqlite3.connect("message.db")
     cursor = conn.cursor()
 
-    cursor.execute("SELECT score FROM logs")
+    cursor.execute("SELECT score FROM logs WHERE guild_id = ?",(guild_id,))
     scores = [row[0] for row in cursor.fetchall()]
 
     if len(scores) <= 1:
@@ -77,7 +78,7 @@ def get_server_stddev():
     import statistics
     return statistics.pstdev(scores)
     
-def get_avg_rank(limit,worst):
+def get_avg_rank(limit,worst,guild_id):
     conn = sqlite3.connect("message.db")
     cursor = conn.cursor()
 
@@ -88,16 +89,17 @@ def get_avg_rank(limit,worst):
     cursor.execute(f"""
         SELECT user_id, AVG(score) AS avg_score
         FROM logs
+        WHERE guild_id = ?
         GROUP BY user_id
         ORDER BY avg_score {worst}
         LIMIT ?
-    """, (limit,))
+    """, (guild_id,limit))
 
     rows = cursor.fetchall()
     conn.close()
     return rows
 
-def get_total_rank(limit,worst):
+def get_total_rank(limit,worst,guild_id):
     conn = sqlite3.connect("message.db")
     cursor = conn.cursor()
 
@@ -107,10 +109,11 @@ def get_total_rank(limit,worst):
     cursor.execute(f"""
         SELECT user_id SUM(score) as sum_score
         FROM logs
+        WHERE guild_id = ?
         GROUP BY user_id
         ORDER BY sum_score {worst}
         LIMIT ?
-    """,(limit))
+    """,(guild_id,limit))
     rows = cursor.fetchall()
     conn.close()
     return rows
