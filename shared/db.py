@@ -7,7 +7,7 @@ from MessageData import MessageData
 
 
 
-db_path = "./message.db"
+db_path = "./shared/message.db"
 conn = sqlite3.connect(db_path)
 cursor = conn.cursor()
 
