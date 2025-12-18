@@ -1,6 +1,12 @@
+import datetime
 import sqlite3
+import statistics
+import time
 
 from MessageData import MessageData
+
+
+
 
 conn = sqlite3.connect("message.db")
 cursor = conn.cursor()
@@ -16,9 +22,6 @@ CREATE TABLE IF NOT EXISTS logs (
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 )
 """)
-
-
-
 
 
 conn.commit()
@@ -107,7 +110,7 @@ def get_total_rank(limit,worst,guild_id):
     else: worst = "ASC"
 
     cursor.execute(f"""
-        SELECT user_id SUM(score) as sum_score
+        SELECT user_id, SUM(score) as sum_score
         FROM logs
         WHERE guild_id = ?
         GROUP BY user_id
@@ -118,6 +121,29 @@ def get_total_rank(limit,worst,guild_id):
     conn.close()
     return rows
 
+def get_today_stats(guild_id):
+    conn = sqlite3.connect("message.db")
+    cursor = conn.cursor()
+
+    cursor.execute(f"""
+        SELECT score
+        FROM logs
+        WHERE guild_id = ? AND
+        date(created_at) = date("now","localtime")
+    """,(guild_id,))
+
+    rows = cursor.fetchall()
+    conn.close()
+    today = {}
+
+    scores = [row[0] for row in rows]
+    if scores:
+        today["avg_today"] = statistics.mean(scores)
+    else:
+        today["avg_today"] = 0
+
+    today["date"] = datetime.date.today()
+    return today
 
     
 

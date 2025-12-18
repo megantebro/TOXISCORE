@@ -10,7 +10,7 @@ import os
 
 from MessageData import MessageData
 from ai import judge_message
-from db import save_messages
+from shared.db import save_messages
 import commands
 
 

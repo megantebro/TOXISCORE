@@ -3,7 +3,7 @@ import json
 from discord import app_commands
 import discord
 
-from db import get_avg_rank, get_avg_userscore, get_server_avg, get_server_stddev
+from shared.db import get_avg_rank, get_avg_userscore, get_server_avg, get_server_stddev
 
 @app_commands.command(name="avg_toxiscore",description="ユーザーの平均暴言スコアを取得します")
 async def avg_toxiscore(interaction:discord.Interaction,user:discord.Member = None):
