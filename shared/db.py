@@ -81,7 +81,7 @@ def get_server_stddev(guild_id):
     import statistics
     return statistics.pstdev(scores)
     
-def get_avg_rank(limit,worst,guild_id):
+def get_avg_rank(limit,worst,guild_id,min_post):
     conn = sqlite3.connect(db_path)
     cursor = conn.cursor()
 
@@ -94,6 +94,7 @@ def get_avg_rank(limit,worst,guild_id):
         FROM logs
         WHERE guild_id = ?
         GROUP BY user_id
+        HAVING COUNT(*) >= {min_post}
         ORDER BY avg_score {worst}
         LIMIT ?
     """, (guild_id,limit))

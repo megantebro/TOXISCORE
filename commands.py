@@ -10,7 +10,10 @@ async def avg_toxiscore(interaction:discord.Interaction,user:discord.Member = No
     if(user == None):
         user = interaction.user
     avg_score = get_avg_userscore(user.id,interaction.guild.id)
-    await interaction.response.send_message(avg_score)
+    if avg_score:
+        await interaction.response.send_message(avg_score)
+    else:
+        await interaction.response.send_message("ユーザーはまだ発言をしていません")
 
 @app_commands.command(
     name="toxicity_rank",
@@ -92,9 +95,10 @@ class rankType(Enum):
         name="ranking",
         description="サーバーの治安にどのくらい影響を与えているかのランキングを表示します"
 )
-async def ranking(interaction:discord.Interaction,worst:bool = False,min_post:int = 10,type:rankType = rankType.avg):
+async def ranking(interaction:discord.Interaction,worst:bool = False,limit:int = 5,min_post:int = 10,type:rankType = rankType.avg):
     if type == rankType.avg:
-        rows = get_avg_rank(worst=worst,limit=min_post,guild_id=interaction.guild.id)
+
+        rows = get_avg_rank(worst=worst,limit=limit,guild_id=interaction.guild.id,min_post=min_post)
     elif type == rankType.total            :
         rows = ()
     res = ""
@@ -106,7 +110,7 @@ async def ranking(interaction:discord.Interaction,worst:bool = False,min_post:in
     for row in rows:
         res += f"\n #{count}  <@{row[0]}>:平均暴言指数{row[1]}"
         count +=1
-    await interaction.response.send_message(res)
+    await interaction.response.send_message(res,ephemeral=True)
 
 def setup(tree: app_commands.CommandTree) -> None:
     tree.add_command(avg_toxiscore)
