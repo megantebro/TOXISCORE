@@ -7,8 +7,8 @@ from MessageData import MessageData
 
 
 
-
-conn = sqlite3.connect("message.db")
+db_path = "./message.db"
+conn = sqlite3.connect(db_path)
 cursor = conn.cursor()
 
 cursor.execute("""
@@ -33,7 +33,7 @@ def save_messages(msgDatas:list[MessageData], scores: list):
     scores: List[int]
     """
 
-    conn = sqlite3.connect("message.db")
+    conn = sqlite3.connect(db_path)
     cursor = conn.cursor()
 
     for i in range(len(scores)):
@@ -48,7 +48,7 @@ def save_messages(msgDatas:list[MessageData], scores: list):
 
 
 def get_avg_userscore(user_id:int,guild_id:int):
-    conn = sqlite3.connect("message.db")
+    conn = sqlite3.connect(db_path)
     cursor = conn.cursor()
     cursor.execute("""
     SELECT AVG(score) FROM logs WHERE user_id = ? AND guild_id = ?
@@ -59,7 +59,7 @@ def get_avg_userscore(user_id:int,guild_id:int):
     return score
 
 def get_server_avg(guild_id):
-    conn = sqlite3.connect("message.db")
+    conn = sqlite3.connect(db_path)
     cursor = conn.cursor()
 
     cursor.execute("SELECT AVG(score) FROM logs WHERE guild_id = ?",(guild_id,))
@@ -69,7 +69,7 @@ def get_server_avg(guild_id):
     return avg
 
 def get_server_stddev(guild_id):
-    conn = sqlite3.connect("message.db")
+    conn = sqlite3.connect(db_path)
     cursor = conn.cursor()
 
     cursor.execute("SELECT score FROM logs WHERE guild_id = ?",(guild_id,))
@@ -82,7 +82,7 @@ def get_server_stddev(guild_id):
     return statistics.pstdev(scores)
     
 def get_avg_rank(limit,worst,guild_id):
-    conn = sqlite3.connect("message.db")
+    conn = sqlite3.connect(db_path)
     cursor = conn.cursor()
 
     if worst: worst = "DESC"
@@ -103,7 +103,7 @@ def get_avg_rank(limit,worst,guild_id):
     return rows
 
 def get_total_rank(limit,worst,guild_id):
-    conn = sqlite3.connect("message.db")
+    conn = sqlite3.connect(db_path)
     cursor = conn.cursor()
 
     if worst: worst = "DESC"
@@ -122,7 +122,7 @@ def get_total_rank(limit,worst,guild_id):
     return rows
 
 def get_today_stats(guild_id):
-    conn = sqlite3.connect("message.db")
+    conn = sqlite3.connect(db_path)
     cursor = conn.cursor()
 
     cursor.execute(f"""
