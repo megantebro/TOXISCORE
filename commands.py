@@ -28,6 +28,10 @@ async def toxicity_rank(interaction: discord.Interaction, user: discord.Member =
     server_avg = get_server_avg(guild.id)
     server_std = get_server_stddev(guild.id)
 
+    if user_avg == None or server_avg == None:
+        await interaction.response.send_message("サーバー平均が存在していないかユーザーはまだ発言していません")
+        return
+
     impact = user_avg - server_avg
 
     if server_std > 0:

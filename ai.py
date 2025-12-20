@@ -9,6 +9,12 @@ load_dotenv()
 client = AsyncOpenAI(api_key=os.getenv("OPENAI_API_KEY"))
 
 async def judge_message(messages: list):
+    
+    for message in messages:
+        if len(message) >= 30:
+            messages.remove(message)
+
+
     """
     messages: List[MessageData]
     return: List[int] (各メッセージのスコア)
@@ -30,14 +36,18 @@ async def judge_message(messages: list):
     """
 
     # 新 API（v1.x）形式
-    response = await client.chat.completions.create(
-        model="gpt-4o-mini",
-        messages=[
-            {"role": "user", "content": prompt}
-        ]
-    )
 
-     
+    try:
+        response = await client.chat.completions.create(
+            model="gpt-4o-mini",
+            messages=[
+                {"role": "user", "content": prompt}
+            ]
+        )
+    except:
+        return [0] * len(messages) 
+    
+
     raw = response.choices[0].message.content.strip()
 
     try:
