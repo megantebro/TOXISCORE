@@ -12,7 +12,7 @@ async def judge_message(messages: list):
     
     for message in messages:
         if len(message.content) >= 30:
-            messages.remove(message.content)
+            messages.remove(message)
 
 
     """
