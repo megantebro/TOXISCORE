@@ -10,7 +10,7 @@ export default function GuildDashboard() {
   useEffect(() => {
     (async () => {
       try {
-        const s = await apiGet(`/api/guilds/${guildId}/stats`);
+        const s = await apiGet(`/api/guilds/${guildId}/stats`)
         setStats(s);
       } catch (e) {
         setErr("取得できなかった（ログイン切れかも）");
@@ -28,10 +28,8 @@ export default function GuildDashboard() {
       <div style={{ opacity: 0.7, marginBottom: 12 }}>guild_id: {guildId}</div>
 
       <ul>
-        <li>messages_today: {stats.messages_today}</li>
-        <li>joins_today: {stats.joins_today}</li>
-        <li>leaves_today: {stats.leaves_today}</li>
-        <li>toxicity_score_today: {stats.toxicity_score_today}</li>
+        <li>avg_all: {stats.avg_all}</li>
+        <li>avg_today: {stats.avg_today}</li>
       </ul>
     </div>
   );

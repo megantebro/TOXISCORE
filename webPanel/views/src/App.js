@@ -3,6 +3,7 @@ import Home from "./pages/Home";
 import Dashboard from "./pages/Dashboard";
 import GuildDashboard from "./pages/GuildDashboard";
 import "./App.css";
+import CommandsPage from "./pages/CommandsPage"
 
 function App() {
 	return (
@@ -12,6 +13,7 @@ function App() {
         <Route path="/dashboard" element={<Dashboard />} />
         <Route path="/dashboard/:guildId" element={<GuildDashboard />} />
         <Route path="*" element={<Navigate to="/" replace />} />
+        <Route path="/commands" element={<CommandsPage />} />
       </Routes>
     </BrowserRouter>
   );

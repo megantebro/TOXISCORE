@@ -1,6 +1,9 @@
+import { redirect } from "react-router-dom";
+
 export default function DocsSection() {
+
   return (
-    <section id="docs" className="docs">
+<section id="docs" className="docs">
       <div className="container">
         <h2 className="sectionTitle">Docs</h2>
         <p className="sectionSub">
@@ -24,14 +27,14 @@ export default function DocsSection() {
           </div>
         </div>
 
-        <div className="note">
-          <h4>Next step</h4>
-          <p>
-            次は FastAPI 側に <code>/auth/discord/login</code> を作って、
-            Discord OAuth に繋げると “管理画面っぽさ” が一気に出る。
-          </p>
-        </div>
-      </div>
+       <div className="card" onClick={()=>{
+          redirect("http://localhost:3000/commands")
+       }}>
+          <h3>4) Commands</h3>
+          <a href="/commands">ここをクリックしてコマンドを確認</a>
+       </div>
+       </div>
     </section>
   );
 }
+    
