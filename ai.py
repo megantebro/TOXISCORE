@@ -11,7 +11,7 @@ client = AsyncOpenAI(api_key=os.getenv("OPENAI_API_KEY"))
 async def judge_message(messages: list):
     
     for message in messages:
-        if len(message.content) >= 30:
+        if len(message.content) >= 70:
             messages.remove(message)
 
 
