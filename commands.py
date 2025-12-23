@@ -4,6 +4,7 @@ from os import name
 from discord import app_commands
 import discord
 
+import MessageData
 import ai
 from shared.db import get_avg_rank, get_avg_userscore, get_server_avg, get_server_stddev
 
@@ -126,6 +127,7 @@ async def ranking(interaction:discord.Interaction,worst:bool = False,limit:int =
 )
 async def check(interaction:discord.Interaction,msg:str):
     await interaction.response.defer()
+    msgData = MessageData(interaction.user,msg,interaction.guild_id)
     score = (await ai.judge_message([msg]))[0]
     await interaction.followup.send(f"発言は{score}点です")
 
