@@ -4,6 +4,7 @@ from os import name
 from discord import app_commands
 import discord
 
+import ai
 from shared.db import get_avg_rank, get_avg_userscore, get_server_avg, get_server_stddev
 
 @app_commands.command(name="avg_toxiscore",description="ユーザーの平均暴言スコアを取得します")
@@ -123,8 +124,9 @@ async def ranking(interaction:discord.Interaction,worst:bool = False,limit:int =
         name="check",
         description = "入力がどのくらいの暴言なのか調べます"
 )
-async def check(interaction:discord.Interaction):
-    pass
+async def check(interaction:discord.Interaction,msg:str):
+    await interaction.response.defer()
+    await interaction.followup.send(f"発言は{ai.judge_message([msg])}点です")
 
 def setup(tree: app_commands.CommandTree) -> None:
     tree.add_command(avg_toxiscore)
@@ -132,3 +134,4 @@ def setup(tree: app_commands.CommandTree) -> None:
     tree.add_command(add_exclude_channel)
     tree.add_command(remove_exclude_channel)
     tree.add_command(ranking)
+    tree.add_command(check)
