@@ -1,3 +1,5 @@
+from math import e
+import traceback
 from openai import AsyncOpenAI
 import os
 from dotenv import load_dotenv
@@ -56,8 +58,8 @@ async def judge_message(messages: list):
             print(text_list)
             print(scores)
             return scores
-    except:
-        pass
+    except :
+        traceback.print_exc()
 
     # パース失敗時は全部0
     return [0] * len(messages)

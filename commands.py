@@ -20,6 +20,7 @@ async def avg_toxiscore(interaction:discord.Interaction,user:discord.Member = No
     description="サーバー平均と比較した治安影響スコアを表示します",
 )
 async def toxicity_rank(interaction: discord.Interaction, user: discord.Member = None):
+    interaction.response.defer(ephemeral=True)
     if user is None:
         user = interaction.user
 
@@ -56,7 +57,7 @@ async def toxicity_rank(interaction: discord.Interaction, user: discord.Member =
     else:
         msg += "🙂 **普通レベルです**"
 
-    await interaction.response.send_message(msg)
+    await interaction.followup.send(msg)
 
 @app_commands.command(
         name="add_exclude_channel",
