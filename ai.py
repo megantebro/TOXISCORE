@@ -59,6 +59,7 @@ async def judge_message(messages: list):
             print(scores)
             return scores
     except :
+        print(raw)
         traceback.print_exc()
 
     # パース失敗時は全部0
