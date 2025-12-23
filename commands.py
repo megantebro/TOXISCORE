@@ -127,7 +127,7 @@ async def ranking(interaction:discord.Interaction,worst:bool = False,limit:int =
 )
 async def check(interaction:discord.Interaction,msg:str):
     await interaction.response.defer()
-    msgData = MessageData(interaction.user,msg,interaction.guild_id)
+    msgData = MessageData(interaction.user,interaction.guild_id,msg)
     score = (await ai.judge_message([msg]))[0]
     await interaction.followup.send(f"発言は{score}点です")
 
