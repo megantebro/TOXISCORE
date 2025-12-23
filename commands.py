@@ -123,7 +123,8 @@ async def ranking(interaction:discord.Interaction,worst:bool = False,limit:int =
         name="check",
         description = "入力がどのくらいの暴言なのか調べます"
 )
-async def check(interaction:discord.interaction,worst)
+async def check(interaction:discord.interaction,worst):
+    pass
 
 def setup(tree: app_commands.CommandTree) -> None:
     tree.add_command(avg_toxiscore)
