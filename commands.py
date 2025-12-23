@@ -119,7 +119,7 @@ async def ranking(interaction:discord.Interaction,worst:bool = False,limit:int =
     await interaction.response.send_message(res,ephemeral=True)
 
 
-@app_commands(
+@app_commands.command(
         name="check",
         description = "入力がどのくらいの暴言なのか調べます"
 )
