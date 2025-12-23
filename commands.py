@@ -1,5 +1,6 @@
 from enum import Enum
 import json
+from os import name
 from discord import app_commands
 import discord
 
@@ -20,7 +21,7 @@ async def avg_toxiscore(interaction:discord.Interaction,user:discord.Member = No
     description="サーバー平均と比較した治安影響スコアを表示します",
 )
 async def toxicity_rank(interaction: discord.Interaction, user: discord.Member = None):
-    interaction.response.defer(ephemeral=True)
+    await interaction.response.defer(ephemeral=True)
     if user is None:
         user = interaction.user
 
@@ -30,7 +31,7 @@ async def toxicity_rank(interaction: discord.Interaction, user: discord.Member =
     server_std = get_server_stddev(guild.id)
 
     if user_avg == None or server_avg == None:
-        await interaction.response.send_message("サーバー平均が存在していないかユーザーはまだ発言していません")
+        await interaction.followup.send("サーバー平均が存在していないかユーザーはまだ発言していません")
         return
 
     impact = user_avg - server_avg
@@ -116,6 +117,13 @@ async def ranking(interaction:discord.Interaction,worst:bool = False,limit:int =
         res += f"\n #{count}  <@{row[0]}>:平均暴言指数{row[1]}"
         count +=1
     await interaction.response.send_message(res,ephemeral=True)
+
+
+@app_commands(
+        name="check",
+        description = "入力がどのくらいの暴言なのか調べます"
+)
+async def check(interaction:discord.interaction,worst)
 
 def setup(tree: app_commands.CommandTree) -> None:
     tree.add_command(avg_toxiscore)
