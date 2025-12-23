@@ -126,7 +126,9 @@ async def ranking(interaction:discord.Interaction,worst:bool = False,limit:int =
 )
 async def check(interaction:discord.Interaction,msg:str):
     await interaction.response.defer()
-    await interaction.followup.send(f"発言は{ai.judge_message([msg])[0]}点です")
+    score = (await ai.judge_message([msg]))[0]
+    await interaction.followup.send(f"発言は{score}点です")
+
 
 def setup(tree: app_commands.CommandTree) -> None:
     tree.add_command(avg_toxiscore)
