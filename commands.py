@@ -125,11 +125,11 @@ async def ranking(interaction:discord.Interaction,worst:bool = False,limit:int =
         name="check",
         description = "入力がどのくらいの暴言なのか調べます"
 )
-async def check(interaction:discord.Interaction,msg:str):
+async def check(interaction:discord.Interaction,msg:str,show:bool = False):
     await interaction.response.defer()
     msgData = MessageData(interaction.user,interaction.guild_id,msg)
     score = (await ai.judge_message([msgData]))[0]
-    await interaction.followup.send(f"発言は{score}点です")
+    await interaction.followup.send(f"発言は{score}点です",ephemeral=(not show))
 
 
 def setup(tree: app_commands.CommandTree) -> None:
