@@ -38,7 +38,7 @@ async def on_ready():
 @client.event
 async def on_message(message:discord.Message):
     if(message.author == client.user):return
-    if not message.author.bot:return
+    if message.author.bot:return
     if(is_channel_exclude(message.channel.id)):return
     if(message.author in user_last_messagetime):
         if(time.time() - user_last_messagetime[message.author] < 5):return
